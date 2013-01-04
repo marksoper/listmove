@@ -1,0 +1,11 @@
+
+div#container {
+  border: 1px solid black;
+}
+
+div#content {
+  left: 10px;
+  top: 30px;
+  border: 1px solid black;
+  height: 100px;
+}
