@@ -19,7 +19,7 @@ var main = function() {
   };
   var lists = {};
   for (var listName in initialData) {
-    lists[listName] = new list.List(document.getElementById(listName), initialData[listName]);
+    lists[listName] = new list.List(listName, document.getElementById(listName), initialData[listName]);
     lists[listName].render();
   }
 };

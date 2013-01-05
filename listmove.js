@@ -1,7 +1,9 @@
 var list;
 (function (list) {
     var List = (function () {
-        function List(ul, items) {
+        function List(name, ul, items) {
+            this.dragging = false;
+            this.name = name;
             this.ul = ul;
             this.items = items || [];
             this.render();
@@ -18,19 +20,41 @@ var list;
             });
             this.ul.innerHTML = html;
         };
-        List.prototype.dragenter = function (evt) {
-            console.log("dragenter event: " + evt);
-        };
         List.prototype.dragstart = function (evt) {
-            console.log("dragstart event: " + evt);
+            this.dragging = true;
+            this.ul.style.opacity = "0.5";
+            console.log("list " + this.name + " dragstart event: " + evt);
+        };
+        List.prototype.dragenter = function (evt) {
+            if(!this.dragging) {
+                console.log("list " + this.name + " dragenter event: " + evt);
+                this.ul.style.border = "2px solid #99ff99";
+            }
+        };
+        List.prototype.dragleave = function (evt) {
+            if(!this.dragging) {
+                console.log("list " + this.name + " dragleave event: " + evt);
+                this.ul.style.border = "2px solid #999999";
+            }
+        };
+        List.prototype.dragend = function (evt) {
+            this.dragging = false;
+            this.ul.style.opacity = "1.0";
+            console.log("list " + this.name + " dragend event: " + evt);
         };
         List.prototype.bindEvents = function () {
             var self = this;
+            this.ul.addEventListener("dragstart", function (evt) {
+                self.dragstart.call(self, evt);
+            }, false);
             this.ul.addEventListener("dragenter", function (evt) {
                 self.dragenter.call(self, evt);
             }, false);
-            this.ul.addEventListener("dragstart", function (evt) {
-                self.dragstart.call(self, evt);
+            this.ul.addEventListener("dragleave", function (evt) {
+                self.dragleave.call(self, evt);
+            }, false);
+            this.ul.addEventListener("dragend", function (evt) {
+                self.dragend.call(self, evt);
             }, false);
         };
         return List;
@@ -53,7 +77,7 @@ var main = function () {
     var lists = {
     };
     for(var listName in initialData) {
-        lists[listName] = new list.List(document.getElementById(listName), initialData[listName]);
+        lists[listName] = new list.List(listName, document.getElementById(listName), initialData[listName]);
         lists[listName].render();
     }
 };

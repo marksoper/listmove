@@ -11,12 +11,13 @@ div#container ul {
   border:2px solid #999999;
 }
 
-div#container ul.availableForRemove:hover {
+div#container ul:hover {
   border:2px solid #bbbbbb;
 }
 
 div#container li {
   cursor: move;
+  margin: 20px 0px;
 }
 
 div#container div#leftListContainer {
