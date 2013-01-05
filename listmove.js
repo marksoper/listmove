@@ -4,18 +4,34 @@ var list;
         function List(ul, items) {
             this.ul = ul;
             this.items = items || [];
+            this.render();
+            this.bindEvents();
         }
-        List.prototype.createItemElement = function (item) {
-            var element = document.createElement("li");
-            return element;
+        List.prototype.createItemHTML = function (item) {
+            return '<li draggable="true">' + item + '</li>';
         };
         List.prototype.render = function () {
             var html = "";
             var self = this;
             this.items.forEach(function (item) {
-                html = html + self.createItemElement(item);
+                html = html + self.createItemHTML(item);
             });
             this.ul.innerHTML = html;
+        };
+        List.prototype.dragenter = function (evt) {
+            console.log("dragenter event: " + evt);
+        };
+        List.prototype.dragstart = function (evt) {
+            console.log("dragstart event: " + evt);
+        };
+        List.prototype.bindEvents = function () {
+            var self = this;
+            this.ul.addEventListener("dragenter", function (evt) {
+                self.dragenter.call(self, evt);
+            }, false);
+            this.ul.addEventListener("dragstart", function (evt) {
+                self.dragstart.call(self, evt);
+            }, false);
         };
         return List;
     })();
