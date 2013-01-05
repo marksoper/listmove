@@ -1,10 +1,11 @@
 var list;
 (function (list) {
     var List = (function () {
-        function List(name, ul, items) {
+        function List(name, ul, dropTarget, items) {
             this.dragging = false;
             this.name = name;
             this.ul = ul;
+            this.dropTarget = dropTarget;
             this.items = items || [];
             this.render();
             this.bindEvents();
@@ -26,18 +27,26 @@ var list;
             console.log("list " + this.name + " dragstart event: " + evt);
         };
         List.prototype.dragenter = function (evt) {
-            if(!this.dragging) {
-                console.log("list " + this.name + " dragenter event: " + evt);
-                this.ul.style.border = "2px solid #99ff99";
+            if(this.dragging) {
+                return;
             }
+            evt.preventDefault();
+            evt.stopPropagation();
+            console.log("list " + this.name + " dragenter event: " + evt);
+            this.dropTarget.style.border = "2px solid #99ff99";
         };
         List.prototype.dragleave = function (evt) {
-            if(!this.dragging) {
-                console.log("list " + this.name + " dragleave event: " + evt);
-                this.ul.style.border = "2px solid #999999";
+            if(this.dragging) {
+                return;
             }
+            evt.preventDefault();
+            evt.stopPropagation();
+            console.log("list " + this.name + " dragleave event: " + evt);
+            this.dropTarget.style.border = "2px solid #999999";
         };
         List.prototype.dragend = function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
             this.dragging = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
@@ -46,15 +55,19 @@ var list;
             var self = this;
             this.ul.addEventListener("dragstart", function (evt) {
                 self.dragstart.call(self, evt);
+                return false;
             }, false);
-            this.ul.addEventListener("dragenter", function (evt) {
+            this.dropTarget.addEventListener("dragenter", function (evt) {
                 self.dragenter.call(self, evt);
-            }, false);
-            this.ul.addEventListener("dragleave", function (evt) {
+                return false;
+            }, true);
+            this.dropTarget.addEventListener("dragleave", function (evt) {
                 self.dragleave.call(self, evt);
-            }, false);
+                return false;
+            }, true);
             this.ul.addEventListener("dragend", function (evt) {
                 self.dragend.call(self, evt);
+                return false;
             }, false);
         };
         return List;
@@ -77,7 +90,7 @@ var main = function () {
     var lists = {
     };
     for(var listName in initialData) {
-        lists[listName] = new list.List(listName, document.getElementById(listName), initialData[listName]);
+        lists[listName] = new list.List(listName, document.getElementById(listName), document.getElementById(listName + "ListContainer"), initialData[listName]);
         lists[listName].render();
     }
 };

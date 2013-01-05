@@ -7,12 +7,14 @@
 module list {
   export class List {
     name : string;
-    items : string[];
     ul : HTMLElement;  // <ul> DOM element associated with this list
+    dropTarget : HTMLElement; // DOM element that represents the target area for dropping
+    items : string[];
     dragging : bool = false;
-    constructor(name: string, ul : HTMLElement, items : string[]) {
+    constructor(name: string, ul : HTMLElement, dropTarget : HTMLElement, items : string[]) {
       this.name = name;
       this.ul = ul;
+      this.dropTarget = dropTarget;
       this.items = items || []; // look into doing default params with typescript
       this.render();
       this.bindEvents();
@@ -35,18 +37,28 @@ module list {
       console.log("list " + this.name + " dragstart event: " + evt);
     }
     dragenter(evt) {
-      if (!this.dragging) {  // if you are the source list, don't behave like a target
-        console.log("list " + this.name + " dragenter event: " + evt);
-        this.ul.style.border = "2px solid #99ff99";
+      // if you are the source list, don't behave like a target
+      if (this.dragging) {
+        return;
       }
+      evt.preventDefault();
+      evt.stopPropagation();
+      console.log("list " + this.name + " dragenter event: " + evt);
+      this.dropTarget.style.border = "2px solid #99ff99";
     }
     dragleave(evt) {
-      if (!this.dragging) {  // if you are the source list, don't behave like a target
-        console.log("list " + this.name + " dragleave event: " + evt);
-        this.ul.style.border = "2px solid #999999";  // TODO: concerned that this is not DRY w/ respect to CSS
+      // if you are the source list, don't behave like a target
+      if (this.dragging) {
+        return;
       }
+      evt.preventDefault();
+      evt.stopPropagation();
+      console.log("list " + this.name + " dragleave event: " + evt);
+      this.dropTarget.style.border = "2px solid #999999";  // TODO: concerned that this is not DRY w/ respect to CSS
     }
     dragend(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
       this.dragging = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
@@ -59,15 +71,19 @@ module list {
       //
       this.ul.addEventListener("dragstart", function(evt) {
         self.dragstart.call(self, evt);
+        return false;
       }, false);
-      this.ul.addEventListener("dragenter", function(evt) {
+      this.dropTarget.addEventListener("dragenter", function(evt) {
         self.dragenter.call(self, evt);
-      }, false);
-      this.ul.addEventListener("dragleave", function(evt) {
+        return false;
+      }, true);
+      this.dropTarget.addEventListener("dragleave", function(evt) {
         self.dragleave.call(self, evt);
-      }, false);
+        return false;       
+       }, true);
       this.ul.addEventListener("dragend", function(evt) {
         self.dragend.call(self, evt);
+        return false;
       }, false);
     }
   }
