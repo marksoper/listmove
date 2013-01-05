@@ -1,23 +1,18 @@
-var List = (function () {
-    function List(items) {
-        this.items = items || [];
-    }
-    return List;
-})();
-var leftListData = [
-    "horse", 
-    "cat", 
-    "dog"
-];
-var rightListData = [
-    "mouse", 
-    "bird", 
-    "squirrel"
-];
-var leftList = new List(leftListData);
-var rightList = new List(rightListData);
-var testList = new List([
-    1, 
-    2, 
-    3
-]);
+var list = require("./list")
+var main = function () {
+    var leftListData = [
+        "horse", 
+        "cat", 
+        "dog"
+    ];
+    var rightListData = [
+        "mouse", 
+        "bird", 
+        "squirrel"
+    ];
+    var leftEl = document.getElementById("leftList");
+    var rightEl = document.getElementById("rightList");
+    var leftList = new list.List(leftListData, leftEl);
+    var rightList = new list.List(rightListData, rightEl);
+};
+window.onload = main;
