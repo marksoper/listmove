@@ -8,10 +8,10 @@ declare var Element;
     
 module list {
   export class List {
-    items : Element[];
-    ul : Element;
-    constructor(el : Element, initialItems : string[]) {
-      this.el = el;
+    elements : Element[];
+    ul : Element;  // <ul> DOM element associated with this list
+    constructor(ul : Element, initialItems : string[]) {
+      this.ul = ul;
       if (initialItems) {
         initialItems.forEach(function(item) {
           this.insertElement(this.makeElement(item));
@@ -21,10 +21,14 @@ module list {
     makeElement(item : string) {
       var element = document.createElement("li");
       element.appendChild(item);
+      //
+      // may need to flesh out tag attributes
+      //
       return element;
     }
     insertElement(element : Element, position : Number) {
-
+      position = position || this.elements.length;
+      this.elements.splice(position, 0, element)
     }
   }
 }
