@@ -1,4 +1,14 @@
-var list = require("./list")
+var list;
+(function (list) {
+    var List = (function () {
+        function List(items, ul) {
+            this.items = items || [];
+            this.ul;
+        }
+        return List;
+    })();
+    list.List = List;    
+})(list || (list = {}));
 var main = function () {
     var leftListData = [
         "horse", 

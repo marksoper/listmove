@@ -5,11 +5,9 @@
 //
 
 //
-// satisfy lint by declaring globals to be used
+// reference the list module that defines the List class
 //
-declare var Element;
-
-import list = module("./list")
+///<reference path='list.ts'/>
 
 //
 // to be run after DOM is loaded
@@ -21,6 +19,8 @@ var main = function() {
   var rightEl = document.getElementById("rightList");
   var leftList = new list.List(leftListData, leftEl);
   var rightList = new list.List(rightListData, rightEl);
+  leftList.render();
+  rightList.render();
 };
 
 //

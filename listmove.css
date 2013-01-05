@@ -1,11 +1,16 @@
 
-div#container {
+div.listContainer {
   border: 1px solid black;
 }
 
-div#content {
-  left: 10px;
-  top: 30px;
-  border: 1px solid black;
-  height: 100px;
+div#leftListContainer {
+  float: left;
+  clear: left;
 }
+
+div#rightListContainer {
+  float: right;
+  clear: right;
+}
+
+
