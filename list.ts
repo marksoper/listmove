@@ -5,22 +5,29 @@
 //
 
 module list {
+
   export class List {
+
     name : string;
     ul : HTMLElement;  // <ul> DOM element associated with this list
     items : string[];
-    private dragging : bool = false;
+    private activeSource : bool = false;  // an item from this list is currently being dragged
+    private dragActiveSubelement : bool = false;  // dragenter has occurred, dragleave has not, for a subelement
     private originalBorder : string;
+
     constructor(name: string, ul : HTMLElement, items : string[]) {
       this.name = name;
       this.ul = ul;
+      this.originalBorder = this.ul.style.border;
       this.items = items || []; // look into doing default params with typescript
       this.render();
       this.bindEvents();
     }
-    private createItemHTML(item : string) {
+
+    createItemHTML(item : string) {
       return '<li draggable="true">' + item + '</li>'
     }
+
     render() {
       var html = "";
       var self = this;  // TODO: look into how typescript can eliminate need for such a line
@@ -37,7 +44,7 @@ module list {
     //
 
     dragstart(evt) {
-      this.dragging = true;
+      this.activeSource = true;
       this.ul.style.opacity = "0.5";
       console.log("list " + this.name + " dragstart event: " + evt);
     }
@@ -45,7 +52,7 @@ module list {
     dragend(evt) {
       evt.preventDefault();
       evt.stopPropagation();
-      this.dragging = false;
+      this.activeSource = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
     }
@@ -55,33 +62,44 @@ module list {
     //
 
     dragenter(evt) {
-      // if you are the source list, don't behave like a target
-      if (this.dragging) {
+      // this is a target event only - ignore if this list is a source
+      if (this.activeSource) {
         return;
       }
-      this.originalBorder = this.originalBorder || this.ul.style.border;
       evt.preventDefault();
       evt.stopPropagation();
-      console.log("list " + this.name + " dragenter event on tagName: " + evt.target.tagName);
+      var tagName = evt.target.tagName.toLowerCase();
+      // if the drag is entering an <li>, set the dragActiveSubelement flag
+      if (tagName === "li") {
+        this.dragActiveSubelement = true;
+      }
+      console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + evt.target.tagName);
       this.ul.style.border = "2px solid #99ff99";
     }
 
     dragleave(evt) {
-      // if you are the source list, don't behave like a target
-      if (this.dragging) {
+      // this is a target event only - ignore if this list is a source
+      if (this.activeSource) {
         return;
       }
+      var tagName = evt.target.tagName.toLowerCase();
+      console.log("list " + this.name + " dragleave event on tagName: " + tagName);
       // if the drag is just leaving an <li>, don't remove the highlighting from the <ul>
-      if (evt.target.tagName.toLowerCase() === "li") {
+      if (tagName === "li") {
+        this.dragActiveSubelement = false;
+        return;
+      }
+      if (this.dragActiveSubelement) {
         return;
       }
       evt.preventDefault();
       evt.stopPropagation();
-      console.log("list " + this.name + " dragleave event on tagName: " + evt.target.tagName);
+      console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
       this.ul.style.border = this.originalBorder;
     }
 
     bindEvents() {
+
       var self = this;  // TODO: look into how typescript can eliminate need for such a line
       //
       // TODO: see if typescript makes it possible to bind event handlers directly
@@ -89,31 +107,30 @@ module list {
       //
 
       //
-      // source (drag) events
+      // bind source (drag) events
       //
       this.ul.addEventListener("dragstart", function(evt) {
         self.dragstart.call(self, evt);
         return false;
       }, false);
+
       this.ul.addEventListener("dragend", function(evt) {
         self.dragend.call(self, evt);
         return false;
       }, false);
 
       //
-      // target (drop) events
+      // bind target (drop) events
       //
       this.ul.addEventListener("dragenter", function(evt) {
         self.dragenter.call(self, evt);
         return false;
       }, true);
+
       this.ul.addEventListener("dragleave", function(evt) {
         self.dragleave.call(self, evt);
         return false;       
        }, true);
-
-
-
 
     }
   }

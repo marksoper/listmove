@@ -2,9 +2,11 @@ var list;
 (function (list) {
     var List = (function () {
         function List(name, ul, items) {
-            this.dragging = false;
+            this.activeSource = false;
+            this.dragActiveSubelement = false;
             this.name = name;
             this.ul = ul;
+            this.originalBorder = this.ul.style.border;
             this.items = items || [];
             this.render();
             this.bindEvents();
@@ -21,37 +23,46 @@ var list;
             this.ul.innerHTML = html;
         };
         List.prototype.dragstart = function (evt) {
-            this.dragging = true;
+            this.activeSource = true;
             this.ul.style.opacity = "0.5";
             console.log("list " + this.name + " dragstart event: " + evt);
         };
         List.prototype.dragend = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            this.dragging = false;
+            this.activeSource = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
         };
         List.prototype.dragenter = function (evt) {
-            if(this.dragging) {
+            if(this.activeSource) {
                 return;
             }
-            this.originalBorder = this.originalBorder || this.ul.style.border;
             evt.preventDefault();
             evt.stopPropagation();
-            console.log("list " + this.name + " dragenter event on tagName: " + evt.target.tagName);
+            var tagName = evt.target.tagName.toLowerCase();
+            if(tagName === "li") {
+                this.dragActiveSubelement = true;
+            }
+            console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + evt.target.tagName);
             this.ul.style.border = "2px solid #99ff99";
         };
         List.prototype.dragleave = function (evt) {
-            if(this.dragging) {
+            if(this.activeSource) {
                 return;
             }
-            if(evt.target.tagName.toLowerCase() === "li") {
+            var tagName = evt.target.tagName.toLowerCase();
+            console.log("list " + this.name + " dragleave event on tagName: " + tagName);
+            if(tagName === "li") {
+                this.dragActiveSubelement = false;
+                return;
+            }
+            if(this.dragActiveSubelement) {
                 return;
             }
             evt.preventDefault();
             evt.stopPropagation();
-            console.log("list " + this.name + " dragleave event on tagName: " + evt.target.tagName);
+            console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
             this.ul.style.border = this.originalBorder;
         };
         List.prototype.bindEvents = function () {
