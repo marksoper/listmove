@@ -13,14 +13,15 @@
 // to be run after DOM is loaded
 //
 var main = function() {
-  var leftListData = ["horse", "cat", "dog"];
-  var rightListData = ["mouse", "bird", "squirrel"];
-  var leftEl = document.getElementById("leftList");
-  var rightEl = document.getElementById("rightList");
-  var leftList = new list.List(leftListData, leftEl);
-  var rightList = new list.List(rightListData, rightEl);
-  leftList.render();
-  rightList.render();
+  var initialData = {
+    left: ["horse", "cat", "dog"],
+    right: ["mouse", "bird", "squirrel"]
+  };
+  var lists = {};
+  for (var listName in initialData) {
+    lists[listName] = new list.List(document.getElementById(listName), initialData[listName]);
+    lists[listName].render();
+  }
 };
 
 //
