@@ -7,7 +7,7 @@ div#container {
 div#container ul {
   list-style-type: none;
   padding:10px 30px;
-  margin:0;
+  margin:20px 0;
   border:2px solid #999999;
 }
 
@@ -20,12 +20,12 @@ div#container li {
   margin: 20px 0px;
 }
 
-div#container div#leftListContainer {
+div#container div#leftListContainer, div#leftLowerListContainer {
   float: left;
   clear: left;
 }
 
-div#container div#rightListContainer {
+div#container div#rightListContainer, div#rightLowerListContainer {
   float: right;
   clear: right;
 }
