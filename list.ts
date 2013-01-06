@@ -69,7 +69,11 @@ module list {
       this.activeSource = true;
       this.ul.style.opacity = "0.5";
       console.log("list " + this.name + " dragstart event: " + evt);
-      evt.dataTransfer.setData('text/plain', evt.target.innerHTML);
+      var data = {
+        list: this.name,
+        item: evt.target.innerHTML
+      };
+      evt.dataTransfer.setData('text/plain', JSON.stringify(data));
     }
 
     dragend(evt) {
@@ -79,6 +83,11 @@ module list {
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
       if (evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {  // indicates a drop
+        // prevent dropping back onto source list
+        if (JSON.parse(evt.dataTransfer.getData("text/plain")).list === this.name) {
+          console.log("preventing removal due to drop back onto source list");
+          return;
+        }
         // figure out which item to remove by obtaining the index of the node in the <ul>
         var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
         this.remove(index);
@@ -135,7 +144,7 @@ module list {
       }
       console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
       this.activeTargetOff();
-      this.add(evt.dataTransfer.getData("text/plain"));
+      this.add(JSON.parse(evt.dataTransfer.getData("text/plain")).item);
     }
 
     bindEvents() {
