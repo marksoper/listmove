@@ -3,6 +3,7 @@ var list;
     var List = (function () {
         function List(name, ul, items) {
             this.activeSource = false;
+            this.activeTarget = false;
             this.dragActiveSubelement = false;
             this.name = name;
             this.ul = ul;
@@ -26,6 +27,7 @@ var list;
             this.activeSource = true;
             this.ul.style.opacity = "0.5";
             console.log("list " + this.name + " dragstart event: " + evt);
+            evt.dataTransfer.setData('text/plain', "testing");
         };
         List.prototype.dragend = function (evt) {
             evt.preventDefault();
@@ -44,7 +46,8 @@ var list;
             if(tagName === "li") {
                 this.dragActiveSubelement = true;
             }
-            console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + evt.target.tagName);
+            console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + tagName);
+            this.activeTarget = true;
             this.ul.style.border = "2px solid #99ff99";
         };
         List.prototype.dragleave = function (evt) {
@@ -63,7 +66,13 @@ var list;
             evt.preventDefault();
             evt.stopPropagation();
             console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
+            this.activeTarget = false;
             this.ul.style.border = this.originalBorder;
+        };
+        List.prototype.drop = function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
         };
         List.prototype.bindEvents = function () {
             var self = this;
@@ -78,11 +87,19 @@ var list;
             this.ul.addEventListener("dragenter", function (evt) {
                 self.dragenter.call(self, evt);
                 return false;
-            }, true);
+            }, false);
             this.ul.addEventListener("dragleave", function (evt) {
                 self.dragleave.call(self, evt);
                 return false;
-            }, true);
+            }, false);
+            this.ul.addEventListener("drop", function (evt) {
+                self.drop.call(self, evt);
+                return false;
+            }, false);
+            this.ul.addEventListener("dragover", function (evt) {
+                evt.preventDefault();
+                return false;
+            }, false);
         };
         return List;
     })();
