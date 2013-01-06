@@ -1,14 +1,21 @@
 
+# Experiment with Typescript and HTML5 Drag & Drop
 
-Requirement:
+## Usage
+
+Open listmove.html in your browser
+
+
+
+## Requirement:
 
 Move items between two lists rendered in HTML
 
-Inputs:
+## Inputs:
 
 Left selection list { "horse", "cat", "dog" }, right selection list { "mouse", "bird", "squirrel" }
 
-Expected output:
+## Expected output:
 
 1) When an item is moved from one list to the other, it should then only reside in the new list (for instance, moving "mouse" from the right removes "mouse" from the right and adds it on the left (simply add the new entry to the bottom of the list).
 
