@@ -48,6 +48,10 @@ var list;
         List.prototype.dragend = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
+            if(this.activeSource) {
+                this.activeSource = false;
+                return;
+            }
             this.activeSource = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
@@ -57,11 +61,11 @@ var list;
             }
         };
         List.prototype.dragenter = function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
             if(this.activeSource) {
                 return;
             }
-            evt.preventDefault();
-            evt.stopPropagation();
             var tagName = evt.target.tagName.toLowerCase();
             if(tagName === "li") {
                 this.dragActiveSubelement = true;
@@ -70,6 +74,8 @@ var list;
             this.activeTargetOn();
         };
         List.prototype.dragleave = function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
             if(this.activeSource) {
                 return;
             }
@@ -82,14 +88,15 @@ var list;
             if(this.dragActiveSubelement) {
                 return;
             }
-            evt.preventDefault();
-            evt.stopPropagation();
             console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
             this.activeTargetOff();
         };
         List.prototype.drop = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
+            if(this.activeSource) {
+                return;
+            }
             console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
             this.activeTargetOff();
             this.add(evt.dataTransfer.getData("text/plain"));
@@ -118,6 +125,7 @@ var list;
             }, false);
             this.ul.addEventListener("dragover", function (evt) {
                 evt.preventDefault();
+                evt.stopPropagation();
                 return false;
             }, false);
         };

@@ -75,6 +75,10 @@ module list {
     dragend(evt) {
       evt.preventDefault();
       evt.stopPropagation();
+      if (this.activeSource) {
+        this.activeSource = false;
+        return;
+      }
       this.activeSource = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
@@ -90,12 +94,12 @@ module list {
     //
 
     dragenter(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
       // this is a target event only - ignore if this list is a source
       if (this.activeSource) {
         return;
       }
-      evt.preventDefault();
-      evt.stopPropagation();
       var tagName = evt.target.tagName.toLowerCase();
       // if the drag is entering an <li>, set the dragActiveSubelement flag
       if (tagName === "li") {
@@ -106,6 +110,8 @@ module list {
     }
 
     dragleave(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
       // this is a target event only - ignore if this list is a source
       if (this.activeSource) {
         return;
@@ -120,8 +126,6 @@ module list {
       if (this.dragActiveSubelement) {
         return;
       }
-      evt.preventDefault();
-      evt.stopPropagation();
       console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
       this.activeTargetOff();
     }
@@ -129,6 +133,10 @@ module list {
     drop(evt) {
       evt.preventDefault();
       evt.stopPropagation();
+      // prevent dropping item into it's source list
+      if (this.activeSource) {
+        return;
+      }
       console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
       this.activeTargetOff();
       this.add(evt.dataTransfer.getData("text/plain"));
@@ -175,6 +183,7 @@ module list {
 
       this.ul.addEventListener("dragover", function(evt) {
         evt.preventDefault();
+        evt.stopPropagation();
         return false;       
        }, false);
 
