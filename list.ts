@@ -25,8 +25,29 @@ module list {
       this.bindEvents();
     }
 
+    add(item : string) {
+      this.items.push(item);
+      this.render();
+    }
+
+    remove(at : number) {
+      this.items.splice(at, 1);
+      this.render();
+    }
+
     createItemHTML(item : string) {
       return '<li draggable="true">' + item + '</li>'
+    }
+
+    activeTargetOn() {
+      this.activeTarget = true;
+      // active target style highlighting goes here
+      this.ul.style.border = "2px solid #99ff99";
+    }
+
+    activeTargetOff() {
+      this.activeTarget = false;
+      this.ul.style.border = this.originalBorder;
     }
 
     render() {
@@ -57,6 +78,11 @@ module list {
       this.activeSource = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
+      if (evt.dataTransfer.dropEffect === "copy") {  // indicates a drop
+        // figure out which item to remove by obtaining the index of the node in the <ul>
+        var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
+        this.remove(index);
+      }
     }
 
     //
@@ -76,8 +102,7 @@ module list {
         this.dragActiveSubelement = true;
       }
       console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + tagName);
-      this.activeTarget = true;
-      this.ul.style.border = "2px solid #99ff99";
+      this.activeTargetOn();
     }
 
     dragleave(evt) {
@@ -98,14 +123,15 @@ module list {
       evt.preventDefault();
       evt.stopPropagation();
       console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
-      this.activeTarget = false;
-      this.ul.style.border = this.originalBorder;
+      this.activeTargetOff();
     }
 
     drop(evt) {
       evt.preventDefault();
       evt.stopPropagation();
       console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
+      this.activeTargetOff();
+      this.add(evt.dataTransfer.getData("text/plain"));
     }
 
     bindEvents() {

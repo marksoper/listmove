@@ -12,8 +12,24 @@ var list;
             this.render();
             this.bindEvents();
         }
+        List.prototype.add = function (item) {
+            this.items.push(item);
+            this.render();
+        };
+        List.prototype.remove = function (at) {
+            this.items.splice(at, 1);
+            this.render();
+        };
         List.prototype.createItemHTML = function (item) {
             return '<li draggable="true">' + item + '</li>';
+        };
+        List.prototype.activeTargetOn = function () {
+            this.activeTarget = true;
+            this.ul.style.border = "2px solid #99ff99";
+        };
+        List.prototype.activeTargetOff = function () {
+            this.activeTarget = false;
+            this.ul.style.border = this.originalBorder;
         };
         List.prototype.render = function () {
             var html = "";
@@ -27,7 +43,7 @@ var list;
             this.activeSource = true;
             this.ul.style.opacity = "0.5";
             console.log("list " + this.name + " dragstart event: " + evt);
-            evt.dataTransfer.setData('text/plain', "testing");
+            evt.dataTransfer.setData('text/plain', evt.target.innerHTML);
         };
         List.prototype.dragend = function (evt) {
             evt.preventDefault();
@@ -35,6 +51,10 @@ var list;
             this.activeSource = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
+            if(evt.dataTransfer.dropEffect === "copy") {
+                var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
+                this.remove(index);
+            }
         };
         List.prototype.dragenter = function (evt) {
             if(this.activeSource) {
@@ -47,8 +67,7 @@ var list;
                 this.dragActiveSubelement = true;
             }
             console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + tagName);
-            this.activeTarget = true;
-            this.ul.style.border = "2px solid #99ff99";
+            this.activeTargetOn();
         };
         List.prototype.dragleave = function (evt) {
             if(this.activeSource) {
@@ -66,13 +85,14 @@ var list;
             evt.preventDefault();
             evt.stopPropagation();
             console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
-            this.activeTarget = false;
-            this.ul.style.border = this.originalBorder;
+            this.activeTargetOff();
         };
         List.prototype.drop = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
             console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
+            this.activeTargetOff();
+            this.add(evt.dataTransfer.getData("text/plain"));
         };
         List.prototype.bindEvents = function () {
             var self = this;
