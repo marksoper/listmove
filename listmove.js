@@ -48,10 +48,6 @@ var list;
         List.prototype.dragend = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            if(this.activeSource) {
-                this.activeSource = false;
-                return;
-            }
             this.activeSource = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
@@ -61,11 +57,11 @@ var list;
             }
         };
         List.prototype.dragenter = function (evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
             if(this.activeSource) {
                 return;
             }
+            evt.preventDefault();
+            evt.stopPropagation();
             var tagName = evt.target.tagName.toLowerCase();
             if(tagName === "li") {
                 this.dragActiveSubelement = true;

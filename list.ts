@@ -75,10 +75,6 @@ module list {
     dragend(evt) {
       evt.preventDefault();
       evt.stopPropagation();
-      if (this.activeSource) {
-        this.activeSource = false;
-        return;
-      }
       this.activeSource = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
@@ -94,12 +90,12 @@ module list {
     //
 
     dragenter(evt) {
-      evt.preventDefault();
-      evt.stopPropagation();
       // this is a target event only - ignore if this list is a source
       if (this.activeSource) {
         return;
       }
+      evt.preventDefault();
+      evt.stopPropagation();
       var tagName = evt.target.tagName.toLowerCase();
       // if the drag is entering an <li>, set the dragActiveSubelement flag
       if (tagName === "li") {
