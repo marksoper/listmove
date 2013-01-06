@@ -18,6 +18,4 @@ Expected output:
 
 4) When the mouse key is released, if it is over the new selection list, add it to the list; if not, return to normal mouse cursor behavior.
 
-Code base:
 
-Structured class-based JavaScript or TypeScript are satisfactory, but we have a preference for TypeScript.
