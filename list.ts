@@ -68,7 +68,7 @@ module list {
     dragstart(evt) {
       this.activeSource = true;
       this.ul.style.opacity = "0.5";
-      console.log("list " + this.name + " dragstart event: " + evt);
+      // console.log("list " + this.name + " dragstart event: " + evt);
       var data = {
         list: this.name,
         item: evt.target.innerHTML
@@ -81,7 +81,7 @@ module list {
       evt.stopPropagation();
       this.activeSource = false;
       this.ul.style.opacity = "1.0";
-      console.log("list " + this.name + " dragend event: " + evt);
+      // console.log("list " + this.name + " dragend event: " + evt);
       if (evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {  // indicates a drop
         // figure out which item to remove by obtaining the index of the node in the <ul>
         var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
@@ -105,7 +105,7 @@ module list {
       if (tagName === "li") {
         this.dragActiveSubelement = true;
       }
-      console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + tagName);
+      // console.log("-- highlighting ON -- list " + this.name + " dragenter event on tagName: " + tagName);
       this.activeTargetOn();
     }
 
@@ -117,7 +117,7 @@ module list {
         return;
       }
       var tagName = evt.target.tagName.toLowerCase();
-      console.log("list " + this.name + " dragleave event on tagName: " + tagName);
+      // console.log("list " + this.name + " dragleave event on tagName: " + tagName);
       // if the drag is just leaving an <li>, don't remove the highlighting from the <ul>
       if (tagName === "li") {
         this.dragActiveSubelement = false;
@@ -126,7 +126,7 @@ module list {
       if (this.dragActiveSubelement) {
         return;
       }
-      console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
+      // console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
       this.activeTargetOff();
     }
 
@@ -151,7 +151,7 @@ module list {
 
         return;
       }
-      console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
+      // console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
       this.activeTargetOff();
       this.add(JSON.parse(evt.dataTransfer.getData("text/plain")).item);
     }
