@@ -78,7 +78,7 @@ module list {
       this.activeSource = false;
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
-      if (evt.dataTransfer.dropEffect === "copy") {  // indicates a drop
+      if (evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {  // indicates a drop
         // figure out which item to remove by obtaining the index of the node in the <ul>
         var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
         this.remove(index);

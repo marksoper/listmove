@@ -51,7 +51,7 @@ var list;
             this.activeSource = false;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
-            if(evt.dataTransfer.dropEffect === "copy") {
+            if(evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {
                 var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
                 this.remove(index);
             }
