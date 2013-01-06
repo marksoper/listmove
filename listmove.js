@@ -56,10 +56,6 @@ var list;
             this.ul.style.opacity = "1.0";
             console.log("list " + this.name + " dragend event: " + evt);
             if(evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {
-                if(JSON.parse(evt.dataTransfer.getData("text/plain")).list === this.name) {
-                    console.log("preventing removal due to drop back onto source list");
-                    return;
-                }
                 var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
                 this.remove(index);
             }
@@ -95,6 +91,13 @@ var list;
             console.log("-- highlighting OFF -- setting border to " + this.originalBorder);
             this.activeTargetOff();
         };
+        List.prototype.dragover = function (evt) {
+            if(this.activeSource) {
+                return;
+            }
+            evt.preventDefault();
+            evt.stopPropagation();
+        };
         List.prototype.drop = function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -128,8 +131,7 @@ var list;
                 return false;
             }, false);
             this.ul.addEventListener("dragover", function (evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
+                self.dragover.call(self, evt);
                 return false;
             }, false);
         };

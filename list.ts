@@ -83,11 +83,6 @@ module list {
       this.ul.style.opacity = "1.0";
       console.log("list " + this.name + " dragend event: " + evt);
       if (evt.dataTransfer.dropEffect === "copy" || evt.dataTransfer.dropEffect === "move") {  // indicates a drop
-        // prevent dropping back onto source list
-        if (JSON.parse(evt.dataTransfer.getData("text/plain")).list === this.name) {
-          console.log("preventing removal due to drop back onto source list");
-          return;
-        }
         // figure out which item to remove by obtaining the index of the node in the <ul>
         var index = Array.prototype.indexOf.call(evt.target.parentNode.childNodes, evt.target);
         this.remove(index);
@@ -135,11 +130,25 @@ module list {
       this.activeTargetOff();
     }
 
+    dragover(evt) {
+      // this is a target event only - ignore if this list is a source
+      if (this.activeSource) {
+        return;
+      }
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
+
     drop(evt) {
       evt.preventDefault();
       evt.stopPropagation();
       // prevent dropping item into it's source list
       if (this.activeSource) {
+
+
+        // TODO: perhaps try setting evt.dataTransfer.dropEffect to "none" here
+
+
         return;
       }
       console.log("list " + this.name + " drop event on tagName " + evt.target.tagName.toLowerCase());
@@ -187,8 +196,7 @@ module list {
        }, false);
 
       this.ul.addEventListener("dragover", function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
+        self.dragover.call(self, evt);
         return false;       
        }, false);
 
